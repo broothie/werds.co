@@ -1,17 +1,22 @@
 require 'sinatra'
 require 'base64'
 
-not_found { redirect '/' }
+not_found { redirect to '/' }
 
 get '/' do
-  if params['t']
-    redirect "/#{Base64.urlsafe_encode64(params['t'])}"
-    return
+  if text = params['t']
+    redirect to "/#{Base64.urlsafe_encode64(text)}"
+  else
+    erb :index
   end
-
-  erb :index
 end
 
 get '/:hash' do |hash|
-  erb :main, locals: { text: Base64.urlsafe_decode64(hash) }
+  begin
+    @text = Base64.urlsafe_decode64(hash)
+  rescue
+    redirect to '/'
+  end
+
+  erb :main
 end
