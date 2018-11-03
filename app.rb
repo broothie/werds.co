@@ -3,16 +3,13 @@ require 'base64'
 
 not_found { redirect '/' }
 
-get '/gen/:text' do |text|
-  redirect "/#{Base64.urlsafe_encode64(text)}"
-end
-
 get '/' do
-  erb :index
-end
+  if params['t']
+    redirect "/#{Base64.urlsafe_encode64(params['t'])}"
+    return
+  end
 
-post '/' do
-  redirect "/#{Base64.urlsafe_encode64(params['text'])}"
+  erb :index
 end
 
 get '/:hash' do |hash|
