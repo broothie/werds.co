@@ -8,7 +8,7 @@ set :redis, Redis.new(url: ENV['REDIS_URL'])
 not_found { redirect to '/' }
 
 get '/' do
-  text = params['text']
+  text = params['t']
 
   if text
     key = SecureRandom.urlsafe_base64(settings.key_size)
