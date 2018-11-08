@@ -49,10 +49,12 @@
       resize: none;
 
       width: 100%;
+      font-size: 14pt;
+      font-family: serif;
+      margin-top: 5px;
 
       box-sizing: border-box;
       border: 1px solid gray;
-      margin-top: 5px;
     }
 
     form > button {
@@ -75,7 +77,7 @@
     </div>
 
     <form method="get" action="/">
-      <textarea id="werds" name="t" autofocus="autofocus" placeholder="enter some words" rows="5"></textarea>
+      <textarea id="werds" name="t" autofocus="autofocus" placeholder="enter some words" rows="5" maxlength="<%= @text_limit %>"></textarea>
       <button id="go" type="submit">Go</button>
     </form>
   </div>
