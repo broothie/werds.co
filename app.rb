@@ -25,7 +25,7 @@ get '/:key' do |key|
   text = settings.redis.get(key)
 
   if text
-    @text = text.gsub("\n", '<br/>')
+    @text = CGI.escape_html(text).gsub("\n", '<br/>')
     erb :main
   else
     redirect to '/'
