@@ -17,7 +17,7 @@ get '/' do
     redirect to "/#{key}"
   else
     @text_limit = settings.text_limit
-    erb :index
+    erb :'index.html'
   end
 end
 
@@ -26,7 +26,7 @@ get '/:key' do |key|
 
   if text
     @text = CGI.escape_html(text).gsub("\n", '<br/>')
-    erb :main
+    erb :'main.html'
   else
     redirect to '/'
   end
