@@ -1,4 +1,5 @@
 
+// https://github.com/30-seconds/30-seconds-of-code#copytoclipboard-
 function copyToClipboard(str) {
     const el = document.createElement('textarea');
     el.value = str;
@@ -35,7 +36,7 @@ $(function() {
         copyToClipboard(window.location.href);
         copyLink.text('copied!');
         setTimeout(function() {
-            copyLink.text('get link');
+            copyLink.text('copy link');
         }, 1250)
     });
 });
