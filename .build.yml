@@ -1,8 +1,6 @@
 image: alpine/edge
 sources:
   - https://git.sr.ht/~broothie/werds
-packages:
-  - ruby-dev
 tasks:
   - install: |
       sudo gem install bundler -v 1.16.6 --no-rdoc --no-ri
