@@ -2,7 +2,7 @@ image: alpine/edge
 sources:
   - https://git.sr.ht/~broothie/werds
 packages:
-  - ruby=2.5.1
+  - ruby-2.5.1-r1
 tasks:
   - install: |
       sudo gem install bundler -v 1.16.2 --no-rdoc --no-ri
