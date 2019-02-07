@@ -5,7 +5,7 @@ packages:
   - ruby
 tasks:
   - install: |
-      sudo gem install bundler --no-rdoc --no-ri
+      sudo gem install bundler -v 1.16.2 --no-rdoc --no-ri
   - deploy: |
       export REDIS_URL=$(cat ~/.redis-url | tr -d '\n')
       cd werds
