@@ -5,8 +5,10 @@ tasks:
   - install: |
       sudo gem install bundler --no-rdoc --no-ri
   - deploy: |
+      pwd
+      ls
       export REDIS_URL=$(cat ~/.redis-url | tr -d '\n')
-      cd werds
+      bundle
       bundle exec puma -C puma.rb
 
 secrets:
