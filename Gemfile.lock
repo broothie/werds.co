@@ -2,7 +2,6 @@ GEM
   remote: https://rubygems.org/
   specs:
     mustermann (1.0.3)
-    puma (3.12.0)
     rack (2.0.5)
     rack-protection (2.0.4)
       rack
@@ -18,7 +17,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  puma (~> 3.12)
   redis (~> 4.0)
   sinatra (~> 2.0)
 

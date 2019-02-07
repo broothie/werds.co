@@ -6,10 +6,11 @@ packages:
 tasks:
   - install: |
       sudo gem install bundler -v 1.16.6 --no-rdoc --no-ri
+      sudo gem install puma -v 3.12.0 --no-rdoc --no-ri -- --with-cppflags=-I/usr/local/opt/openssl/include
   - deploy: |
       export REDIS_URL=$(cat ~/.redis-url | tr -d '\n')
       cd werds
-      bundle
+      bundle install
       bundle exec puma -C puma.rb
 
 secrets:
