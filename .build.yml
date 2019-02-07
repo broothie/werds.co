@@ -2,15 +2,15 @@ image: alpine/edge
 sources:
   - https://git.sr.ht/~broothie/werds
 packages:
-  - ruby
+  - ruby=2.5.1
 tasks:
   - install: |
       sudo gem install bundler -v 1.16.2 --no-rdoc --no-ri
   - deploy: |
       export REDIS_URL=$(cat ~/.redis-url | tr -d '\n')
       cd werds
-      sudo bundle
-      sudo bundle exec puma -C puma.rb
+      bundle
+      bundle exec puma -C puma.rb
 
 secrets:
   - 966f7e3f-5531-4dff-a179-b22879666fce
