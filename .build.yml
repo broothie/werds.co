@@ -9,8 +9,8 @@ tasks:
   - deploy: |
       export REDIS_URL=$(cat ~/.redis-url | tr -d '\n')
       cd werds
-      bundle
-      bundle exec puma -C puma.rb
+      sudo bundle
+      sudo bundle exec puma -C puma.rb
 
 secrets:
   - 966f7e3f-5531-4dff-a179-b22879666fce
