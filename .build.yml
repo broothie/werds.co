@@ -1,0 +1,13 @@
+image: alpine/edge
+packages:
+  - ruby
+tasks:
+  - setup: |
+      gem install bundler sinatra puma redis
+  - deploy: |
+      export REDIS_URL=$(cat ~/.redis-url | tr -d '\n')
+      cd werds
+      bundle exec puma -C puma.rb
+
+secrets:
+  - 966f7e3f-5531-4dff-a179-b22879666fce
