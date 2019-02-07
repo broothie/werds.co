@@ -2,8 +2,8 @@ image: alpine/edge
 packages:
   - ruby
 tasks:
-  - setup: |
-      gem install bundler sinatra puma redis
+  - install: |
+      sudo gem install bundler sinatra puma redis
   - deploy: |
       export REDIS_URL=$(cat ~/.redis-url | tr -d '\n')
       cd werds
