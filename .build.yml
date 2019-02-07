@@ -5,6 +5,7 @@ packages:
   - ruby
   - ruby-dev
   - ruby-bundler
+  - ruby-json
   - make
   - gcc
   - libc-dev
