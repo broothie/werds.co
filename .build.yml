@@ -1,9 +1,14 @@
 image: alpine/edge
 sources:
   - https://git.sr.ht/~broothie/werds
+packages:
+  - ruby
+  - ruby-dev
+  - ruby-bundler
+  - make
+  - gcc
+  - libc-dev
 tasks:
-  - install: |
-      sudo gem install bundler -v 1.16.6 --no-rdoc --no-ri
   - deploy: |
       export REDIS_URL=$(cat ~/.redis-url | tr -d '\n')
       cd werds
