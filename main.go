@@ -10,8 +10,10 @@ import (
 var logger = log.New(os.Stdout, "[werds] ", log.LstdFlags)
 
 func main() {
-	loggerMiddleware := newLogger(logger)
+	loggerMiddleware := newLoggerMiddleware(logger)
+
+	handler := loggerMiddleware(http.HandlerFunc(handler))
 	addr := fmt.Sprintf(":%s", os.Getenv("PORT"))
 	logger.Printf("serving @ %s", addr)
-	logger.Panic(http.ListenAndServe(addr, loggerMiddleware(http.HandlerFunc(handler))))
+	logger.Panic(http.ListenAndServe(addr, handler))
 }

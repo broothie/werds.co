@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 	"regexp"
+	"strings"
 	"time"
 
 	"cloud.google.com/go/firestore"
@@ -15,10 +16,10 @@ import (
 const keyLength = 6
 
 var (
-	keyRegexp  = regexp.MustCompile(fmt.Sprintf(`^/[a-z]{%d}$`, keyLength))
+	keyRegexp  = regexp.MustCompile(fmt.Sprintf(`^/[a-zA-Z]{%d}$`, keyLength))
 	mainTmpl   = template.Must(template.ParseFiles("views/main.tmpl.html"))
 	fileServer = http.FileServer(http.Dir("public"))
-	alphabet   = []rune("abcdefghijklmnopqrstuvwxyz")
+	alphabet   = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 )
 
 var werds *firestore.CollectionRef
@@ -61,7 +62,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	// Read post
 	if keyRegexp.MatchString(r.URL.Path) {
 		// Get key and pull post out of db
-		key := r.URL.Path[1:]
+		key := strings.ToUpper(strings.Split(r.URL.Path, "/")[1])
 		doc, err := werds.Doc(key).Get(ctx)
 		if err != nil {
 			logger.Println(err)
@@ -80,7 +81,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// File server
-	fileServer.ServeHTTP(w, r)
+	notFoundInterceptor := newInterceptor(w, func(i *Interceptor) {
+		if i.statusCode == http.StatusNotFound {
+			http.Redirect(i, r, "/", http.StatusPermanentRedirect)
+		}
+	})
+	fileServer.ServeHTTP(notFoundInterceptor, r)
 }
 
 func generateKey() string {
