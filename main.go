@@ -2,18 +2,21 @@ package main
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/base64"
 	"fmt"
 	"html/template"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
+	"regexp"
 	"time"
 
 	"cloud.google.com/go/firestore"
-	"github.com/gorilla/mux"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 func main() {
 	log := log.New(os.Stdout, "[werds] ", log.LstdFlags)
@@ -24,60 +27,19 @@ func main() {
 		log.Panic(err)
 	}
 	defer client.Close()
+
 	werds := client.Collection("werds")
-
-	mainTmpl, err := template.ParseFiles("views/main.tmpl.html")
-	if err != nil {
-		log.Panic(err)
-	}
-
-	router := mux.NewRouter()
-
-	// Werds display
-	router.
-		Methods(http.MethodGet).
-		Path("/{key}").
-		HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			key, ok := mux.Vars(r)["key"]
-			if !ok {
-				http.Redirect(w, r, "/", http.StatusPermanentRedirect)
-				return
-			}
-
-			doc, err := werds.Doc(key).Get(ctx)
-			if err != nil {
-				log.Println(err)
-				w.WriteHeader(http.StatusPermanentRedirect)
-				return
-			}
-			text := doc.Data()["text"]
-
-			mainTmpl.ExecuteTemplate(w, "main.tmpl.html", text)
-		})
-
-	// Index
-	router.
-		Methods(http.MethodGet).
-		Path("/").
-		HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			text := r.URL.Query().Get("t")
-
-			// Serve index view
-			if text == "" {
-				http.ServeFile(w, r, "views/index.html")
-				return
-			}
-
-			key, err := generateKey(8)
-			if err != nil {
-				log.Println(err)
-				http.Redirect(w, r, "/", http.StatusPermanentRedirect)
-				return
-			}
-
+	keyRegexp := regexp.MustCompile(`^/[a-z]{4}$`)
+	mainTmpl := template.Must(template.ParseFiles("views/main.tmpl.html"))
+	fileServer := http.FileServer(http.Dir("public"))
+	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		text := r.URL.Query().Get("t")
+		if text != "" {
 			if len(text) > 1000 {
 				text = text[:1000]
 			}
+
+			key := generateKey()
 			if _, err := werds.Doc(key).Set(ctx, map[string]interface{}{"text": text}); err != nil {
 				log.Println(err)
 				http.Redirect(w, r, "/", http.StatusPermanentRedirect)
@@ -85,16 +47,24 @@ func main() {
 			}
 
 			http.Redirect(w, r, fmt.Sprintf("/%s", key), http.StatusPermanentRedirect)
-		})
+			return
+		}
 
-	// Fileserver
-	router.
-		Methods(http.MethodGet).
-		PathPrefix("/").
-		Handler(http.FileServer(http.Dir("public")))
+		if keyRegexp.MatchString(r.URL.Path) {
+			key := r.URL.Path[1:]
+			doc, err := werds.Doc(key).Get(ctx)
+			if err != nil {
+				log.Println(err)
+				http.Redirect(w, r, "/", http.StatusPermanentRedirect)
+				return
+			}
 
-	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { http.Redirect(w, r, "/", http.StatusPermanentRedirect) })
+			mainTmpl.ExecuteTemplate(w, "main.tmpl.html", doc.Data()["text"])
+			return
+		}
 
+		fileServer.ServeHTTP(w, r)
+	})
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -102,7 +72,7 @@ func main() {
 
 	addr := fmt.Sprintf(":%s", port)
 	log.Printf("serving @ %s", addr)
-	log.Panic(http.ListenAndServe(addr, newLogger(log)(router)))
+	log.Panic(http.ListenAndServe(addr, newLogger(log)(handler)))
 }
 
 type loggerResponseWriter struct {
@@ -136,12 +106,15 @@ func newLogger(log *log.Logger) func(http.Handler) http.Handler {
 	}
 }
 
-// https://blog.questionable.services/article/generating-secure-random-numbers-crypto-rand/
-func generateKey(n int) (string, error) {
-	b := make([]byte, n)
-	_, err := rand.Read(b)
-	if err != nil {
-		return "", err
+const alphabet = "abcdefghijklmnopqrstuvwxyz"
+
+func generateKey() string {
+	alphabet := []rune(alphabet)
+
+	runes := make([]rune, 4)
+	for i := range runes {
+		runes[i] = alphabet[rand.Intn(len(alphabet))]
 	}
-	return base64.URLEncoding.EncodeToString(b), nil
+
+	return string(runes)
 }

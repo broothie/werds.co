@@ -1,7 +1,7 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     var textarea = document.getElementById('werds');
-    var form = document.getElementById("form");
+    var form = document.getElementById('form');
 
     // Grows textarea vertically
     function growTextArea() {
