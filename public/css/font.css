@@ -1,24 +1,24 @@
 
 @font-face {
   font-family: "Vulf-Mono";
-  src: url("/fonts/Vulf_Mono-Regular_web.ttf");
+  src: url("/public/fonts/Vulf_Mono-Regular_web.ttf");
 }
 
 @font-face {
   font-family: "Vulf-Mono";
-  src: url("/fonts/Vulf_Mono-Bold_web.ttf");
+  src: url("/public/fonts/Vulf_Mono-Bold_web.ttf");
   font-weight: bold;
 }
 
 @font-face {
   font-family: "Vulf-Mono";
-  src: url("/fonts/Vulf_Mono-Italic_web.ttf");
+  src: url("/public/fonts/Vulf_Mono-Italic_web.ttf");
   font-style: italic;
 }
 
 @font-face {
   font-family: "Vulf-Mono";
-  src: url("/fonts/Vulf_Mono-Bold_Italic_web.ttf");
+  src: url("/public/fonts/Vulf_Mono-Bold_Italic_web.ttf");
   font-weight: bold;
   font-style: italic;
 }
