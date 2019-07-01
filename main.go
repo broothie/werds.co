@@ -58,7 +58,7 @@ func main() {
 	mainTmpl := template.Must(template.ParseFiles("views/main.tmpl.html"))
 	router.
 		Methods(http.MethodGet).
-		Path("/{key:[0-9a-zA-Z=]{4,}}").
+		Path("/{key:[0-9a-zA-Z=_-]{4,}}").
 		HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// Get key and pull post out of db
 			key := mux.Vars(r)["key"]
